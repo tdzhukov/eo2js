@@ -1,11 +1,11 @@
 /**
- * Class Object
+ * Class ElegantObject
  */
-class Object {
+class ElegantObject {
 
   /**
    * Phi attribute
-   * @type { Object } 
+   * @type { ElegantObject } 
    */
   attr__phi;
 
@@ -15,11 +15,10 @@ class Object {
 }
 // TODO: Add type annotations
 // TODO: Add Class ApplicationMixin
-// TODO: Add Class Attribute
 // TODO: Add operations
 
 
-class Atom extends Object {
+class Atom extends ElegantObject {
 
   data = null;
 
@@ -41,8 +40,80 @@ class Atom extends Object {
   }
 }
 
+function isCallable(obj) {
+  return Object.getOwnPropertyNames(obj.__proto__).includes("call");
+}
 
-class DataizationError extends Object {
+class Attribute extends ElegantObject {
+  constructor(obj, name) {
+    super();
+    this.obj = obj;
+    this.name = name;
+    this.args = [];
+  }
+
+  call(...args) {
+    this.args.push(...args);
+    return this;
+  }
+
+  inner_name() {
+    return "attr_" + this.name;
+  }
+
+  toString() {
+    return `${this.obj}.${this.inner_name()}`;
+  }
+
+  dataize() {
+    let attr = null, res;
+
+    if (Object.getOwnPropertyNames(this.obj).includes(this.inner_name())) {
+      console.log(`Found .${this.inner_name()} in ${this.obj.toString()}.`);
+      attr = this.obj[this.inner_name()];
+    } else {
+      if (Object.getOwnPropertyNames(this.obj).includes("attr__phi")) {
+        console.log(`Did not find .${this.inner_name()} in ${this.obj.toString()},
+                     searching for .${this.inner_name()} in ${this.obj.toString()}'s
+                     phi attribute: ${this.obj.attr__phi.toString()}.`);
+        attr = new Attribute(this.obj.attr__phi, this.name);
+      } else {
+        console.log(`Attribute .${this.inner_name()} was not found.`);
+        attr = null;
+      }
+    }
+
+    if (attr !== null) {
+      if (isCallable(attr)) {
+        let args_str = [];
+        for (let arg of this.args) {
+          args_str.push(arg.toString());
+        }
+        console.log(`Dataizing ${attr.toString()} applied to ${args_str}.`);
+        
+        let res = attr.call();
+        for (let arg in this.args) {
+          res = res.call(arg);
+        }
+        return res.dataize();
+      } else {
+        console.log(`Dataizing ${attr.toString()}, no args needed.`);
+        return attr.dataize();
+      }
+    }
+
+    console.log(`Dataizing ${this.obj.toString()}...`);
+    attr = this.obj.dataize()[this.inner_name()].call();
+    for (let arg in this.args) {
+      attr = attr.call(arg);
+    }
+    return attr.dataize();
+  }
+
+}
+
+
+class DataizationError extends ElegantObject {
 
   dataize() {
     throw new Error("Method 'dataize' must be implemented.");
@@ -91,7 +162,7 @@ class Array extends Atom {
   }
 }
 
-class Sprintf extends Object { // TODO: Add ApplicationMixin
+class Sprintf extends ElegantObject { // TODO: Add ApplicationMixin
   
   constructor() {
     super();
