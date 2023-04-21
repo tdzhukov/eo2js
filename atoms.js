@@ -8,41 +8,73 @@ class ElegantObject {
    * @type { ElegantObject } 
    */
   attr__phi;
+  
+  constructor() {
+    this.varargs = false;
+    this.application_counter = 0;
+    this.attributes = [];
+  }
 
   dataize() {
     return this.attr__phi.dataize();
   }
 }
 // TODO: Add type annotations
-// TODO: Add Class ApplicationMixin
 // TODO: Add operations
+
+
+let ApplicationMixin = {
+  call(arg) {
+    if (this.varargs === false) {
+      if (this.application_counter >= this.attributes.length) {
+        throw new Error(`Error while application of an argument ${arg}`);
+      } else {
+        console.log(`Assigned ${arg} to attr_${this.attributes[this.application_counter]}`);
+        this["attr_" + this.attributes[this.application_counter]] = arg;
+        ++this.application_counter;
+      }
+    } else {
+      if (this.application_counter < this.attributes.length - 1) {
+        this["attr_" + this.attributes[this.application_counter]] = arg;
+        ++this.application_counter;
+      } else {
+        if (this.application_counter === this.attributes.length - 1) {
+          this["attr_" + this.attributes[this.application_counter]].call(arg);
+        }
+      }
+    }
+    return this;
+  }
+};
 
 
 class Atom extends ElegantObject {
 
-  data = null;
+  value = null;
 
-  constructor(data) {
+  constructor(val) {
     super();
-    this.data = data
+    this.value = val
   }
 
   get data() {
-    return this.data;
+    return this.value;
   }
 
   eq(other) {
-    return new Boolean(this.data === other.data);
+    return new Boolean(this.value === other.value);
   }
   
   dataize() {
-    throw new Error("Method 'dataize' must be implemented.");
+    return this;
   }
 }
+
 
 function isCallable(obj) {
   return Object.getOwnPropertyNames(obj.__proto__).includes("call");
 }
+
 
 class Attribute extends ElegantObject {
   constructor(obj, name) {
@@ -91,8 +123,8 @@ class Attribute extends ElegantObject {
         }
         console.log(`Dataizing ${attr.toString()} applied to ${args_str}.`);
         
-        let res = attr.call();
-        for (let arg in this.args) {
+        let res = attr;
+        for (let arg of this.args) {
           res = res.call(arg);
         }
         return res.dataize();
@@ -127,6 +159,10 @@ class Boolean extends Atom {
 
 class Number extends Atom {
 
+  data() {
+    return this.value;
+  }
+
   add(other) {
     return new Number(this.data + other.data);
   }
@@ -137,7 +173,26 @@ class Number extends Atom {
 }
 
 
-class String extends Atom {
+class EOString extends Atom {
+
+  data() {
+    return this.value;
+  }
+}
+
+
+class ArrayGet extends ElegantObject {
+  constructor(arr) {
+    super();
+    this.arr = arr;
+    this.attributes = ["i"];
+    this.attr_i = new DataizationError();
+  }
+
+  dataize() {
+    return this.arr.at(this.attr_i).dataize();
+  }
+
 }
 
 
@@ -145,24 +200,31 @@ class Array extends Atom {
   
   constructor() {
     super();
-    this.data = [];
+    this.value = [];
+    this.attr_get = new ArrayGet(this);
+  }
+
+  call(arg) {
+    this.value.push(arg);
+    return this;
   }
 
   get data() {
-    return this.data.map(x => x.dataize().data);
+    return this.value.map(x => x.dataize().value);
   }
 
   push(object) {
-    this.data.push(object)
+    this.value.push(object)
   }
 
   at(index) {
-    const i = index.dataize().data;
-    return this.data[i];
+    const i = index.dataize().value;
+    return this.value[i];
   }
 }
 
-class Sprintf extends ElegantObject { // TODO: Add ApplicationMixin
+
+class Sprintf extends ElegantObject {
   
   constructor() {
     super();
@@ -175,13 +237,13 @@ class Sprintf extends ElegantObject { // TODO: Add ApplicationMixin
 
   dataize() {
     const fmt = this.attr_fmt.dataize().data();
-    const str_data = this.sprintf(fmt, ...this.attr_args.map(arg => arg.dataize().data));
-    return new String(str_data);
+    const str_data = this.sprintf(fmt, ...this.attr_args.value.map(x => x.dataize().value));
+    return new EOString(str_data);
   }
 }
 
 
-class Stdout extends Atom { // TODO: Add ApplicationMixin
+class Stdout extends Atom {
   
   constructor() {
     super();
@@ -190,7 +252,11 @@ class Stdout extends Atom { // TODO: Add ApplicationMixin
   }
 
   dataize() {
-    console.log(this.attr_text.dataize());
+    console.log(this.attr_text.dataize().data());
     return this;
   }
 }
+
+Object.assign(ArrayGet.prototype, ApplicationMixin);
+Object.assign(Sprintf.prototype, ApplicationMixin);
+Object.assign(Stdout.prototype, ApplicationMixin);
