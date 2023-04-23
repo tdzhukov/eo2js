@@ -2,12 +2,6 @@
  * Class ElegantObject
  */
 class ElegantObject {
-
-  /**
-   * Phi attribute
-   * @type { ElegantObject } 
-   */
-  attr__phi;
   
   constructor() {
     this.varargs = false;
@@ -15,12 +9,15 @@ class ElegantObject {
     this.attributes = [];
   }
 
+  toString() {
+    return "ElegantObject()";
+  }
+
   dataize() {
     return this.attr__phi.dataize();
   }
 }
 // TODO: Add type annotations
-// TODO: Add operations
 
 
 let ApplicationMixin = {
@@ -61,6 +58,10 @@ class Atom extends ElegantObject {
     return this.value;
   }
 
+  toString() {
+    return `Atom(${this.value})`;
+  }
+
   eq(other) {
     return new Boolean(this.value === other.value);
   }
@@ -71,8 +72,13 @@ class Atom extends ElegantObject {
 }
 
 
+function getPropertiesAndMethods(obj) {
+  return [...Object.getOwnPropertyNames(obj), ...Object.getOwnPropertyNames(obj.__proto__)];
+}
+
+
 function isCallable(obj) {
-  return Object.getOwnPropertyNames(obj.__proto__).includes("call");
+  return getPropertiesAndMethods(obj).includes("call");
 }
 
 
@@ -100,14 +106,14 @@ class Attribute extends ElegantObject {
   dataize() {
     let attr = null, res;
 
-    if (Object.getOwnPropertyNames(this.obj).includes(this.inner_name())) {
+    if (getPropertiesAndMethods(this.obj).includes(this.inner_name())) {
       console.log(`Found .${this.inner_name()} in ${this.obj.toString()}.`);
       attr = this.obj[this.inner_name()];
     } else {
-      if (Object.getOwnPropertyNames(this.obj).includes("attr__phi")) {
+      if (getPropertiesAndMethods(this.obj).includes("attr__phi")) {
         console.log(`Did not find .${this.inner_name()} in ${this.obj.toString()},
-                     searching for .${this.inner_name()} in ${this.obj.toString()}'s
-                     phi attribute: ${this.obj.attr__phi.toString()}.`);
+                    searching for .${this.inner_name()} in ${this.obj.toString()}'s
+                    phi attribute: ${this.obj.attr__phi.toString()}.`);
         attr = new Attribute(this.obj.attr__phi, this.name);
       } else {
         console.log(`Attribute .${this.inner_name()} was not found.`);
@@ -135,8 +141,8 @@ class Attribute extends ElegantObject {
     }
 
     console.log(`Dataizing ${this.obj.toString()}...`);
-    attr = this.obj.dataize()[this.inner_name()].call();
-    for (let arg in this.args) {
+    attr = this.obj.dataize()[this.inner_name()];
+    for (let arg of this.args) {
       attr = attr.call(arg);
     }
     return attr.dataize();
@@ -154,22 +160,124 @@ class DataizationError extends ElegantObject {
 
 
 class Boolean extends Atom {
-}
+  constructor(val) {
+    super(val);
+  }
 
-
-class Number extends Atom {
+  get attr_if() {
+    return new IfOperation(this);
+  }
 
   data() {
     return this.value;
   }
 
-  add(other) {
-    return new Number(this.data + other.data);
+  toString() {
+    return `Boolean(${this.value})`;
+  }
+}
+
+
+class Number extends Atom {
+
+  constructor(val) {
+    super(val);
   }
 
-  sub(other) {
-    return new Number(this.data - other.data);
+  get attr_add() {
+    return new NumberOperation(this, "add");
   }
+
+  get attr_sub() {
+    return new NumberOperation(this, "sub");
+  }
+
+  get attr_pow() {
+    return new NumberOperation(this, "pow");
+  }
+
+  get attr_mul() {
+    return new NumberOperation(this, "mul");
+  }
+
+  get attr_less() {
+    return new NumberOperation(this, "lt");
+  }
+
+  get attr_leq() {
+    return new NumberOperation(this, "le");
+  }
+
+  get attr_eq() {
+    return new NumberOperation(this, "eq");
+  }
+
+  toString() {
+    return `Number(${this.value})`;
+  }
+
+  data() {
+    return this.value;
+  }
+}
+
+
+class NumberOperation extends ElegantObject {
+
+  constructor(num, operation) {
+    super();
+    this.operation = operation;
+    this.num = num;
+    this.attributes = ["other"];
+    this.attr_other = new DataizationError();
+  }
+
+  toString() {
+    return `NumberOperation(${this.num}, ${this.operation})`;
+  }
+
+  dataize() {
+    let left = this.num.dataize().data();
+    let right = this.attr_other.dataize().data();
+    switch (this.operation) {
+      case "add":
+        return new Number(left + right);
+      case "sub":
+        return new Number(left - right);
+      case "pow":
+        return new Number(left ** right);
+      case "mul":
+        return new Number(left * right);
+      case "lt":
+        return new Boolean(left < right);
+      case "le":
+        return new Boolean(left <= right);
+      case "eq":
+        return new Boolean(left === right);
+      default:
+        return new DataizationError();
+    }
+  }
+}
+
+
+class IfOperation extends ElegantObject {
+  constructor(bool_instance) {
+    super();
+    this.bool_instance = bool_instance;
+    this.attributes = ["if_true", "if_false"];
+    this.attr_if_true = new DataizationError();
+    this.attr_if_false = new DataizationError();
+  }
+
+  toString() {
+    return `IfOperation(${this.bool_instance})`;
+  }
+
+  dataize() {
+    return this.bool_instance.dataize().data() ? this.attr_if_true.dataize() : this.attr_if_false.dataize();
+  }
+
 }
 
 
@@ -177,6 +285,10 @@ class EOString extends Atom {
 
   data() {
     return this.value;
+  }
+
+  toString() {
+    return `EOString(${this.value})`;
   }
 }
 
@@ -189,10 +301,13 @@ class ArrayGet extends ElegantObject {
     this.attr_i = new DataizationError();
   }
 
+  toString() {
+    return `ArrayGet(${this.arr})`;
+  }
+
   dataize() {
     return this.arr.at(this.attr_i).dataize();
   }
-
 }
 
 
@@ -201,7 +316,23 @@ class Array extends Atom {
   constructor() {
     super();
     this.value = [];
-    this.attr_get = new ArrayGet(this);
+  }
+
+  get attr_get() {
+    return new ArrayGet(this);
+  }
+
+  toString() {
+    let content = "[";
+    for (let i = 0; i < this.value.length; ++i) {
+      content += this.value[i].toString();
+      if (i < this.value.length - 1) {
+        content += ", ";
+      } else {
+        content += "]";
+      }
+    }
+    return `Array(${content})`;
   }
 
   call(arg) {
@@ -225,7 +356,7 @@ class Array extends Atom {
 
 
 class Sprintf extends ElegantObject {
-  
+
   constructor() {
     super();
     this.sprintf = require('sprintf-js').sprintf;
@@ -233,6 +364,10 @@ class Sprintf extends ElegantObject {
     this.attr_fmt = new DataizationError();
     this.attr_args = new Array();
     this.varargs = true;
+  }
+
+  toString() {
+    return "Sprintf()";
   }
 
   dataize() {
@@ -251,12 +386,18 @@ class Stdout extends Atom {
     this.attr_text = new DataizationError();
   }
 
+  toString() {
+    return "Stdout()";
+  }
+
   dataize() {
     console.log(this.attr_text.dataize().data());
     return this;
   }
 }
 
+Object.assign(NumberOperation.prototype, ApplicationMixin);
+Object.assign(IfOperation.prototype, ApplicationMixin);
 Object.assign(ArrayGet.prototype, ApplicationMixin);
 Object.assign(Sprintf.prototype, ApplicationMixin);
 Object.assign(Stdout.prototype, ApplicationMixin);
