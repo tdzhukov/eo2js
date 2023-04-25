@@ -42,7 +42,7 @@ SOFTWARE.
             <goals>
               <goal>parse</goal>
               <goal>optimize</goal>
-              <!--<goal>compile</goal>-->
+              <goal>compile</goal>
             </goals>
             <configuration>
               <sourcesDir>${project.basedir}/eo</sourcesDir>

@@ -11,16 +11,15 @@ $ cd eo2js/sandbox
 ```
 
 After that, you can compile and run the code (you will need
-[Maven 3.3+](https://maven.apache.org/)
-and [Java SDK 8+](https://www.java.com/en/download/) installed) by running:
+[Maven 3.3+](https://maven.apache.org/), 
+[Java SDK 8+](https://www.java.com/en/download/) 
+and [NPM 8.1.2+](https://www.npmjs.com/package/npm) installed) by running:
 
 ```bash
-$ ./run.sh
+$ ./compile.sh
 ```
 This script will:
 * Run `eo2js-maven-plugin` configured in the `pom.xml` of this repository
-* Format the resulting `.js`
-* Dataize object `EOapp` from `app.eo.js` and print the result
 
 Intermediary `*.xml` files will be generated in the `target` directory (it will
 be created). Also, there will be `.js` files in `target/generated-sources` folder. Feel free to analyze

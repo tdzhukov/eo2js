@@ -1,4 +1,5 @@
 {
+  "type": "module",
   "dependencies": {
     "sprintf-js": "^1.1.2"
   }

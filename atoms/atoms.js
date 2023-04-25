@@ -1,7 +1,11 @@
+// These lines make "require" available
+import { createRequire } from "module";
+const require = createRequire(import.meta.url);
+
 /**
  * Class ElegantObject
  */
-class ElegantObject {
+export class ElegantObject {
   
   constructor() {
     this.varargs = false;
@@ -20,7 +24,7 @@ class ElegantObject {
 // TODO: Add type annotations
 
 
-let ApplicationMixin = {
+export let ApplicationMixin = {
   call(arg) {
     if (this.varargs === false) {
       if (this.application_counter >= this.attributes.length) {
@@ -45,7 +49,7 @@ let ApplicationMixin = {
 };
 
 
-class Atom extends ElegantObject {
+export class Atom extends ElegantObject {
 
   value = null;
 
@@ -82,7 +86,7 @@ function isCallable(obj) {
 }
 
 
-class Attribute extends ElegantObject {
+export class Attribute extends ElegantObject {
   constructor(obj, name) {
     super();
     this.obj = obj;
@@ -151,7 +155,7 @@ class Attribute extends ElegantObject {
 }
 
 
-class DataizationError extends ElegantObject {
+export class DataizationError extends ElegantObject {
 
   dataize() {
     throw new Error("Method 'dataize' must be implemented.");
@@ -159,7 +163,7 @@ class DataizationError extends ElegantObject {
 }
 
 
-class Boolean extends Atom {
+export class Boolean extends Atom {
   constructor(val) {
     super(val);
   }
@@ -178,7 +182,7 @@ class Boolean extends Atom {
 }
 
 
-class Number extends Atom {
+export class Number extends Atom {
 
   constructor(val) {
     super(val);
@@ -281,7 +285,7 @@ class IfOperation extends ElegantObject {
 }
 
 
-class EOString extends Atom {
+export class EOString extends Atom {
 
   data() {
     return this.value;
@@ -311,7 +315,7 @@ class ArrayGet extends ElegantObject {
 }
 
 
-class Array extends Atom {
+export class Array extends Atom {
   
   constructor() {
     super();
@@ -355,7 +359,7 @@ class Array extends Atom {
 }
 
 
-class Sprintf extends ElegantObject {
+export class Sprintf extends ElegantObject {
 
   constructor() {
     super();
@@ -378,7 +382,7 @@ class Sprintf extends ElegantObject {
 }
 
 
-class Stdout extends Atom {
+export class Stdout extends Atom {
   
   constructor() {
     super();
