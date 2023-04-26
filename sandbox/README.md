@@ -18,8 +18,14 @@ and [NPM 8.1.2+](https://www.npmjs.com/package/npm) installed) by running:
 ```bash
 $ ./compile.sh
 ```
-This script will:
-* Run `eo2js-maven-plugin` configured in the `pom.xml` of this repository
+
+Or you can run it in debug mode (with logging). To do this pass `--debug` flag to the bash script:
+
+```bash
+$ ./compile.sh --debug
+```
+
+This script will run `eo2js-maven-plugin` configured in the `pom.xml` of this repository
 
 Intermediary `*.xml` files will be generated in the `target` directory (it will
 be created). Also, there will be `.js` files in `target/generated-sources` folder. Feel free to analyze

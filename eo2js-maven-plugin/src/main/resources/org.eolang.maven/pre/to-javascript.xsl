@@ -175,6 +175,17 @@ SOFTWARE.
 <!--        <xsl:value-of select="eo:eol(1)"/>-->
         <xsl:value-of select="eo:eol(1)"/>
         <xsl:apply-templates select="." mode="ctors"/>
+        <xsl:text>toString() {</xsl:text>
+        <xsl:value-of select="eo:eol(2)"/>
+        <xsl:text>return `</xsl:text>
+        <xsl:value-of select="eo:class-name(@name)"/>
+        <xsl:text>(</xsl:text>
+        <xsl:if test="exists(@parent)">
+            <xsl:text>${this.attr__parent}</xsl:text>
+        </xsl:if>
+        <xsl:text>)`;</xsl:text>
+        <xsl:value-of select="eo:eol(1)"/>
+        <xsl:text>}</xsl:text>
         <!--<xsl:apply-templates select="class" mode="body"/>-->
         <xsl:value-of select="eo:eol(0)"/>
         <xsl:text>}</xsl:text>

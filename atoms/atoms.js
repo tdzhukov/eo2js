@@ -8,6 +8,7 @@ const require = createRequire(import.meta.url);
 export class ElegantObject {
   
   constructor() {
+    this.debug_mode = false;
     this.varargs = false;
     this.application_counter = 0;
     this.attributes = [];
@@ -18,6 +19,9 @@ export class ElegantObject {
   }
 
   dataize() {
+    if (this.debug_mode) {
+      console.log(`Dataizing ${this}'s phi-attrbute...`);
+    }
     return this.attr__phi.dataize();
   }
 }
@@ -30,7 +34,9 @@ export let ApplicationMixin = {
       if (this.application_counter >= this.attributes.length) {
         throw new Error(`Error while application of an argument ${arg}`);
       } else {
-        console.log(`Assigned ${arg} to attr_${this.attributes[this.application_counter]}`);
+        if (this.debug_mode) {
+          console.log(`Assigned ${arg} to attr_${this.attributes[this.application_counter]}`);
+        }
         this["attr_" + this.attributes[this.application_counter]] = arg;
         ++this.application_counter;
       }
@@ -111,16 +117,22 @@ export class Attribute extends ElegantObject {
     let attr = null, res;
 
     if (getPropertiesAndMethods(this.obj).includes(this.inner_name())) {
-      console.log(`Found .${this.inner_name()} in ${this.obj.toString()}.`);
+      if (this.debug_mode) {
+        console.log(`Found .${this.inner_name()} in ${this.obj.toString()}.`);
+      }
       attr = this.obj[this.inner_name()];
     } else {
       if (getPropertiesAndMethods(this.obj).includes("attr__phi")) {
-        console.log(`Did not find .${this.inner_name()} in ${this.obj.toString()},
-                    searching for .${this.inner_name()} in ${this.obj.toString()}'s
-                    phi attribute: ${this.obj.attr__phi.toString()}.`);
+        if (this.debug_mode) {
+          console.log(`Did not find .${this.inner_name()} in ${this.obj.toString()},
+                      searching for .${this.inner_name()} in ${this.obj.toString()}'s
+                      phi attribute: ${this.obj.attr__phi.toString()}.`);
+        }
         attr = new Attribute(this.obj.attr__phi, this.name);
       } else {
-        console.log(`Attribute .${this.inner_name()} was not found.`);
+        if (this.debug_mode) {
+          console.log(`Attribute .${this.inner_name()} was not found.`);
+        }
         attr = null;
       }
     }
@@ -131,7 +143,9 @@ export class Attribute extends ElegantObject {
         for (let arg of this.args) {
           args_str.push(arg.toString());
         }
-        console.log(`Dataizing ${attr.toString()} applied to ${args_str}.`);
+        if (this.debug_mode) {
+          console.log(`Dataizing ${attr.toString()} applied to ${args_str}.`);
+        }
         
         let res = attr;
         for (let arg of this.args) {
@@ -139,12 +153,16 @@ export class Attribute extends ElegantObject {
         }
         return res.dataize();
       } else {
-        console.log(`Dataizing ${attr.toString()}, no args needed.`);
+        if (this.debug_mode) {
+          console.log(`Dataizing ${attr.toString()}, no args needed.`);
+        }
         return attr.dataize();
       }
     }
 
-    console.log(`Dataizing ${this.obj.toString()}...`);
+    if (this.debug_mode) {
+      console.log(`Dataizing ${this.obj.toString()}...`);
+    }
     attr = this.obj.dataize()[this.inner_name()];
     for (let arg of this.args) {
       attr = attr.call(arg);
