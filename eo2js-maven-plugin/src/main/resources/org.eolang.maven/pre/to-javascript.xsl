@@ -236,7 +236,7 @@ SOFTWARE.
     <xsl:template match="vararg" mode="assignment">
         <xsl:text>this.</xsl:text>
         <xsl:value-of select="eo:inner-attr-name(o/@name)"/>
-        <xsl:text> = new Array();</xsl:text>
+        <xsl:text> = new ElegantArray();</xsl:text>
         <xsl:value-of select="eo:eol(2)"/>
     </xsl:template>
     <xsl:template match="vararg|free" mode="attribute_names">
@@ -263,7 +263,7 @@ SOFTWARE.
         <xsl:value-of select="eo:eol(1)"/>
     </xsl:template>
     <xsl:template match="array">
-        <xsl:text>(new Array()</xsl:text>
+        <xsl:text>(new ElegantArray()</xsl:text>
         <!-- <xsl:apply-templates select="*"/> WAS THERE PREVIOUSLY -->
         <xsl:apply-templates select="." mode="application"/>
         <xsl:text>)</xsl:text>
@@ -478,9 +478,9 @@ SOFTWARE.
         <xsl:text>(new </xsl:text>
         <xsl:value-of select="@javascript-type"/>
         <xsl:text>(</xsl:text>
-        <!--<xsl:if test="@javascript-type = 'Boolean'">"</xsl:if>-->
+        <!--<xsl:if test="@javascript-type = 'ElegantBoolean'">"</xsl:if>-->
         <xsl:value-of select="text()"/>
-        <!--<xsl:if test="@javascript-type = 'Boolean'">"</xsl:if>-->
+        <!--<xsl:if test="@javascript-type = 'ElegantBoolean'">"</xsl:if>-->
         <xsl:text>))</xsl:text>
     </xsl:template>
     <xsl:template match="meta[head='package']" mode="head">

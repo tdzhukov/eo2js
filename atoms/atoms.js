@@ -73,7 +73,7 @@ export class Atom extends ElegantObject {
   }
 
   eq(other) {
-    return new Boolean(this.value === other.value);
+    return new ElegantBoolean(this.value === other.value);
   }
   
   dataize() {
@@ -181,7 +181,7 @@ export class DataizationError extends ElegantObject {
 }
 
 
-export class Boolean extends Atom {
+export class ElegantBoolean extends Atom {
   constructor(val) {
     super(val);
   }
@@ -195,47 +195,47 @@ export class Boolean extends Atom {
   }
 
   toString() {
-    return `Boolean(${this.value})`;
+    return `ElegantBoolean(${this.value})`;
   }
 }
 
 
-export class Number extends Atom {
+export class ElegantNumber extends Atom {
 
   constructor(val) {
     super(val);
   }
 
   get attr_add() {
-    return new NumberOperation(this, "add");
+    return new ElegantNumberOperation(this, "add");
   }
 
   get attr_sub() {
-    return new NumberOperation(this, "sub");
+    return new ElegantNumberOperation(this, "sub");
   }
 
   get attr_pow() {
-    return new NumberOperation(this, "pow");
+    return new ElegantNumberOperation(this, "pow");
   }
 
   get attr_mul() {
-    return new NumberOperation(this, "mul");
+    return new ElegantNumberOperation(this, "mul");
   }
 
   get attr_less() {
-    return new NumberOperation(this, "lt");
+    return new ElegantNumberOperation(this, "lt");
   }
 
   get attr_leq() {
-    return new NumberOperation(this, "le");
+    return new ElegantNumberOperation(this, "le");
   }
 
   get attr_eq() {
-    return new NumberOperation(this, "eq");
+    return new ElegantNumberOperation(this, "eq");
   }
 
   toString() {
-    return `Number(${this.value})`;
+    return `ElegantNumber(${this.value})`;
   }
 
   data() {
@@ -244,7 +244,7 @@ export class Number extends Atom {
 }
 
 
-class NumberOperation extends ElegantObject {
+class ElegantNumberOperation extends ElegantObject {
 
   constructor(num, operation) {
     super();
@@ -255,7 +255,7 @@ class NumberOperation extends ElegantObject {
   }
 
   toString() {
-    return `NumberOperation(${this.num}, ${this.operation})`;
+    return `ElegantNumberOperation(${this.num}, ${this.operation})`;
   }
 
   dataize() {
@@ -263,19 +263,19 @@ class NumberOperation extends ElegantObject {
     let right = this.attr_other.dataize().data();
     switch (this.operation) {
       case "add":
-        return new Number(left + right);
+        return new ElegantNumber(left + right);
       case "sub":
-        return new Number(left - right);
+        return new ElegantNumber(left - right);
       case "pow":
-        return new Number(left ** right);
+        return new ElegantNumber(left ** right);
       case "mul":
-        return new Number(left * right);
+        return new ElegantNumber(left * right);
       case "lt":
-        return new Boolean(left < right);
+        return new ElegantBoolean(left < right);
       case "le":
-        return new Boolean(left <= right);
+        return new ElegantBoolean(left <= right);
       case "eq":
-        return new Boolean(left === right);
+        return new ElegantBoolean(left === right);
       default:
         return new DataizationError();
     }
@@ -303,19 +303,19 @@ class IfOperation extends ElegantObject {
 }
 
 
-export class EOString extends Atom {
+export class ElegantString extends Atom {
 
   data() {
     return this.value;
   }
 
   toString() {
-    return `EOString(${this.value})`;
+    return `ElegantString(${this.value})`;
   }
 }
 
 
-class ArrayGet extends ElegantObject {
+class ElegantArrayGet extends ElegantObject {
   constructor(arr) {
     super();
     this.arr = arr;
@@ -324,7 +324,7 @@ class ArrayGet extends ElegantObject {
   }
 
   toString() {
-    return `ArrayGet(${this.arr})`;
+    return `ElegantArrayGet(${this.arr})`;
   }
 
   dataize() {
@@ -333,7 +333,7 @@ class ArrayGet extends ElegantObject {
 }
 
 
-export class Array extends Atom {
+export class ElegantArray extends Atom {
   
   constructor() {
     super();
@@ -341,7 +341,7 @@ export class Array extends Atom {
   }
 
   get attr_get() {
-    return new ArrayGet(this);
+    return new ElegantArrayGet(this);
   }
 
   toString() {
@@ -354,7 +354,7 @@ export class Array extends Atom {
         content += "]";
       }
     }
-    return `Array(${content})`;
+    return `ElegantArray(${content})`;
   }
 
   call(arg) {
@@ -384,7 +384,7 @@ export class Sprintf extends ElegantObject {
     this.sprintf = require('sprintf-js').sprintf;
     this.attributes = ["fmt", "args"];
     this.attr_fmt = new DataizationError();
-    this.attr_args = new Array();
+    this.attr_args = new ElegantArray();
     this.varargs = true;
   }
 
@@ -395,7 +395,7 @@ export class Sprintf extends ElegantObject {
   dataize() {
     const fmt = this.attr_fmt.dataize().data();
     const str_data = this.sprintf(fmt, ...this.attr_args.value.map(x => x.dataize().value));
-    return new EOString(str_data);
+    return new ElegantString(str_data);
   }
 }
 
@@ -418,8 +418,8 @@ export class Stdout extends Atom {
   }
 }
 
-Object.assign(NumberOperation.prototype, ApplicationMixin);
+Object.assign(ElegantNumberOperation.prototype, ApplicationMixin);
 Object.assign(IfOperation.prototype, ApplicationMixin);
-Object.assign(ArrayGet.prototype, ApplicationMixin);
+Object.assign(ElegantArrayGet.prototype, ApplicationMixin);
 Object.assign(Sprintf.prototype, ApplicationMixin);
 Object.assign(Stdout.prototype, ApplicationMixin);

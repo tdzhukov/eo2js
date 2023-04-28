@@ -32,22 +32,22 @@ SOFTWARE.
         <xsl:attribute name="javascript-type">
           <xsl:choose>
             <xsl:when test="@data='string'">
-              <xsl:text>EOString</xsl:text>
+              <xsl:text>ElegantString</xsl:text>
             </xsl:when>
             <xsl:when test="@data='regex'">
               <xsl:text>Regex</xsl:text>
             </xsl:when>
             <xsl:when test="@data='char'">
-              <xsl:text>EOString</xsl:text>
+              <xsl:text>ElegantString</xsl:text>
             </xsl:when>
             <xsl:when test="@data='float'">
-              <xsl:text>Number</xsl:text>
+              <xsl:text>ElegantNumber</xsl:text>
             </xsl:when>
             <xsl:when test="@data='int'">
-              <xsl:text>Number</xsl:text>
+              <xsl:text>ElegantNumber</xsl:text>
             </xsl:when>
             <xsl:when test="@data='bool'">
-              <xsl:text>Boolean</xsl:text>
+              <xsl:text>ElegantBoolean</xsl:text>
             </xsl:when>
             <xsl:otherwise>
               <xsl:message terminate="yes">
