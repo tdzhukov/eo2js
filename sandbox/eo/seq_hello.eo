@@ -1,0 +1,5 @@
+[] > app
+  seq > @
+    stdout "Hello\n"
+    stdout "World!\n"
+    stdout "How are you?"

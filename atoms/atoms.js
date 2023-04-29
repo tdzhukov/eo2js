@@ -413,7 +413,33 @@ export class Stdout extends Atom {
   }
 
   dataize() {
-    console.log(this.attr_text.dataize().data());
+    process.stdout.write(this.attr_text.dataize().data());
+    return this;
+  }
+}
+
+
+export class Seq extends Atom {
+  
+  constructor() {
+    super();
+    this.attributes = [];
+    this.args = [];
+  }
+
+  toString() {
+    return "Seq()";
+  }
+
+  call(arg) {
+    this.args.push(arg);
+    return this;
+  }
+
+  dataize() {
+    for (let arg of this.args) {
+      arg.dataize();
+    }
     return this;
   }
 }
