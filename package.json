@@ -1,0 +1,31 @@
+{
+  "name": "eo2js",
+  "version": "1.0.0",
+  "description": "EOlang to JavaScript compiler",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha ./sandbox/test/*.test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tdzhukov/eo2js.git"
+  },
+  "keywords": [
+    "eo",
+    "js",
+    "oop"
+  ],
+  "author": "yegor256",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tdzhukov/eo2js/issues"
+  },
+  "homepage": "https://github.com/tdzhukov/eo2js#readme",
+  "dependencies": {
+    "sprintf-js": "^1.1.2"
+  },
+  "devDependencies": {
+    "mocha": "^10.2.0"
+  }
+}
