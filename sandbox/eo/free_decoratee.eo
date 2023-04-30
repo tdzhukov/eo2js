@@ -3,8 +3,8 @@
 
 [@] > decorator
   add. > incremented_value
-     @
-     1
+    @
+    1
 
 [args...] > app
   number 5 > n

@@ -24,12 +24,14 @@
 package org.eolang;
 
 import com.jcabi.log.Logger;
+import com.jcabi.xml.XML;
 import com.jcabi.xml.XMLDocument;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -38,8 +40,12 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.cactoos.io.OutputTo;
 import org.cactoos.list.ListOf;
-import org.eolang.parser.Xsline;
+import com.yegor256.xsline.Xsline;
+import com.yegor256.xsline.TrClasspath;
+import org.eolang.parser.ParsingTrain;
 import org.slf4j.impl.StaticLoggerBinder;
+import java.io.FileReader;
+import java.io.IOException;
 
 /**
  * Optimize XML files.
@@ -97,7 +103,19 @@ public final class OptimizeMojo extends AbstractMojo {
         final Path dir = this.targetDir.toPath().resolve("02-steps").resolve(name);
         try {
             final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            new Xsline(
+            XML after = new Xsline(
+                new TrClasspath<>(
+                    new ParsingTrain().empty(),
+                    "/org.eolang.maven/optimize/globals-to-abstracts.xsl",
+                    "/org.eolang.maven/optimize/remove-refs.xsl",
+                    "/org.eolang.maven/optimize/abstracts-float-up.xsl",
+                    "/org.eolang.maven/optimize/remove-levels.xsl",
+                    "/org/eolang/parser/add-refs.xsl",
+                    "/org.eolang.maven/optimize/fix-missed-names.xsl",
+                    "/org/eolang/parser/errors/broken-refs.xsl"
+                ).back()
+            ).pass(new XMLDocument(file));
+            /*new Xsline(
                     new XMLDocument(file),
                     new OutputTo(baos),
                     new TargetSpy(dir)
@@ -111,11 +129,11 @@ public final class OptimizeMojo extends AbstractMojo {
                             "org.eolang.maven/optimize/fix-missed-names.xsl",
                             "org/eolang/parser/errors/broken-refs.xsl"
                     )
-            ).pass();
+            ).pass();*/
             final Path target = this.targetDir.toPath()
                     .resolve("03-optimize")
                     .resolve(name);
-            new Save(baos.toString(), target).save();
+            new Save(after.toString(), target).save();
             Logger.info(
                     this, "%s optimized to %s, all steps are in %s",
                     file, target, dir

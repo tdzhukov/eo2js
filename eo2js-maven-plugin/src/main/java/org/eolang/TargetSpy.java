@@ -30,14 +30,14 @@ import com.jcabi.xml.XSL;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
-import org.eolang.parser.Spy;
+//import org.eolang.parser.Spy;
 
 /**
  * The spy to log all results.
  *
  * @since 0.1
  */
-final class TargetSpy implements Spy {
+final class TargetSpy {
 
     /**
      * The dir.
@@ -52,7 +52,7 @@ final class TargetSpy implements Spy {
         this.dir = target;
     }
 
-    @Override
+    //@Override
     public void push(final int index, final XSL xsl, final XML xml)
             throws IOException {
         final List<String> names = new XMLDocument(
