@@ -10,7 +10,6 @@
     4
     5
 
-
 [] > app
   stdout > @
     sprintf
@@ -23,4 +22,3 @@
       (array.get 2).get 3
       array.get 3
       array.get 4
-

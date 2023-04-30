@@ -56,7 +56,7 @@ public final class Save {
      * @param file File to save to
      * @throws IOException If fails
      */
-    public Save(final InputStream input, final Path file) throws IOException {
+    public Save(final InputStream input, final Path file) throws IOException, Exception {
         this(new InputOf(input), file);
     }
 
@@ -66,7 +66,7 @@ public final class Save {
      * @param file File to save to
      * @throws IOException If fails
      */
-    public Save(final Input input, final Path file) throws IOException {
+    public Save(final Input input, final Path file) throws IOException, Exception {
         this(new TextOf(input).asString(), file);
     }
 

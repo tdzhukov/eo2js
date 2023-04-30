@@ -2,7 +2,7 @@
 
 cd .. && mvn -DskipTests clean install
 cd sandbox || exit
-mvn clean compile
+mvn clean compile -e
 
 cp ../atoms/atoms.js ./target/generated-sources/
 cp ../atoms/package.json ./target/generated-sources/

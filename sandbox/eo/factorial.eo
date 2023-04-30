@@ -15,9 +15,8 @@
           1
 
 [args...] > appFactorial
-   stdout > @
-     sprintf
-       "%d! = %d\n"
-       (args.get 0)
-       factorial (args.get 0)
-
+  stdout > @
+    sprintf
+      "%d! = %d\n"
+      (args.get 0)
+      factorial (args.get 0)

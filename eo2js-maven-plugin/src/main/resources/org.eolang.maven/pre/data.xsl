@@ -43,6 +43,9 @@ SOFTWARE.
             <xsl:when test="@data='float'">
               <xsl:text>ElegantNumber</xsl:text>
             </xsl:when>
+            <xsl:when test="@data='bytes'">
+              <xsl:text>ElegantNumber</xsl:text>
+            </xsl:when>
             <xsl:when test="@data='int'">
               <xsl:text>ElegantNumber</xsl:text>
             </xsl:when>
