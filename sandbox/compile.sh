@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-cd .. && mvn -DskipTests clean install
+mvn -DskipTests clean install
 npm install
-cd sandbox || exit
+cd sandbox
 mvn clean compile
 
 cp ../atoms/atoms.js ./target/generated-sources/
