@@ -204,21 +204,12 @@ export class ElegantNumber extends Atom {
 
   constructor(val, number_type="not_used") {
     if (typeof val === "string") {
-<<<<<<< HEAD
       const bytes = val.split(" ").map(byte => parseInt(byte, 16));
       if (number_type === "int") {
         val = Number(new BigInt64Array(new Uint8Array(bytes.reverse()).buffer)[0]);
       }
       if (number_type === "float") {
         val = Number(new Float64Array(new Uint8Array(bytes.reverse()).buffer)[0]);
-=======
-      if (number_type === "int") {
-        val = parseInt(val.replace(/s/g, ""), 16);
-      }
-      if (number_type === "float") {
-        const bytes = val.split(" ").map(byte => parseInt(byte, 16));
-        val = new Float64Array(new Uint8Array(bytes.reverse()).buffer)[0];
->>>>>>> 16a19609788d08eb7b1f9fc3e3868521b6ed0268
       }
     }
     super(val);
