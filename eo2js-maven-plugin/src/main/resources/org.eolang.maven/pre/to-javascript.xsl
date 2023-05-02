@@ -476,11 +476,26 @@ SOFTWARE.
     </xsl:template>
     <xsl:template match="value">
         <xsl:text>(new </xsl:text>
-        <xsl:value-of select="@javascript-type"/>
+        <xsl:choose>
+            <xsl:when test="@javascript-type = 'ElegantInt' or @javascript-type = 'ElegantFloat'">
+                <xsl:text>ElegantNumber</xsl:text>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="@javascript-type"/>
+            </xsl:otherwise>
+        </xsl:choose>
         <xsl:text>(</xsl:text>
-        <!--<xsl:if test="@javascript-type = 'ElegantBoolean'">"</xsl:if>-->
+        <xsl:if test="@javascript-type = 'ElegantString' or @javascript-type = 'ElegantInt' or @javascript-type = 'ElegantFloat'">"</xsl:if>
         <xsl:value-of select="text()"/>
-        <!--<xsl:if test="@javascript-type = 'ElegantBoolean'">"</xsl:if>-->
+        <xsl:if test="@javascript-type = 'ElegantString' or @javascript-type = 'ElegantInt' or @javascript-type = 'ElegantFloat'">"</xsl:if>
+        <xsl:choose>
+            <xsl:when test="@javascript-type = 'ElegantInt'">
+                <xsl:text>, "int"</xsl:text>
+            </xsl:when>
+            <xsl:when test="@javascript-type = 'ElegantFloat'">
+                <xsl:text>, "float"</xsl:text>
+            </xsl:when>
+        </xsl:choose>
         <xsl:text>))</xsl:text>
     </xsl:template>
     <xsl:template match="meta[head='package']" mode="head">
