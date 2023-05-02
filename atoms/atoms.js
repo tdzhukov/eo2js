@@ -204,12 +204,12 @@ export class ElegantNumber extends Atom {
 
   constructor(val, number_type="not_used") {
     if (typeof val === "string") {
+      const bytes = val.split(" ").map(byte => parseInt(byte, 16));
       if (number_type === "int") {
-        val = parseInt(val.replace(/s/g, ""), 16);
+        val = Number(new BigInt64Array(new Uint8Array(bytes.reverse()).buffer)[0]);
       }
       if (number_type === "float") {
-        const bytes = val.split(" ").map(byte => parseInt(byte, 16));
-        val = new Float64Array(new Uint8Array(bytes.reverse()).buffer)[0];
+        val = Number(new Float64Array(new Uint8Array(bytes.reverse()).buffer)[0]);
       }
     }
     super(val);
@@ -253,7 +253,7 @@ export class ElegantNumber extends Atom {
 }
 
 
-class ElegantNumberOperation extends ElegantObject {
+export class ElegantNumberOperation extends ElegantObject {
 
   constructor(num, operation) {
     super();
@@ -292,7 +292,7 @@ class ElegantNumberOperation extends ElegantObject {
 }
 
 
-class IfOperation extends ElegantObject {
+export class IfOperation extends ElegantObject {
   constructor(bool_instance) {
     super();
     this.bool_instance = bool_instance;
@@ -314,10 +314,9 @@ class IfOperation extends ElegantObject {
 
 export class ElegantString extends Atom {
 
-  constructor(val) {
-    const bytes = val.split(" ").map(byte => parseInt(byte, 16));
-    // if val is given in form of bytes
-    if (val.length === bytes.length * 3 - 1) {
+  constructor(val, is_bytes=false) {
+    if (is_bytes) {
+      let bytes = val.split(" ").map(byte => parseInt(byte, 16));
       val = String.fromCharCode(...bytes);
     }
     super(val);
@@ -333,7 +332,7 @@ export class ElegantString extends Atom {
 }
 
 
-class ElegantArrayGet extends ElegantObject {
+export class ElegantArrayGet extends ElegantObject {
   constructor(arr) {
     super();
     this.arr = arr;

@@ -495,6 +495,9 @@ SOFTWARE.
             <xsl:when test="@javascript-type = 'ElegantFloat'">
                 <xsl:text>, "float"</xsl:text>
             </xsl:when>
+            <xsl:when test="@javascript-type = 'ElegantString'">
+                <xsl:text>, true</xsl:text>
+            </xsl:when>
         </xsl:choose>
         <xsl:text>))</xsl:text>
     </xsl:template>
