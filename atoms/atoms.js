@@ -202,7 +202,16 @@ export class ElegantBoolean extends Atom {
 
 export class ElegantNumber extends Atom {
 
-  constructor(val) {
+  constructor(val, number_type="not_used") {
+    if (typeof val === "string") {
+      if (number_type === "int") {
+        val = parseInt(val.replace(/s/g, ""), 16);
+      }
+      if (number_type === "float") {
+        const bytes = val.split(" ").map(byte => parseInt(byte, 16));
+        val = new Float64Array(new Uint8Array(bytes.reverse()).buffer)[0];
+      }
+    }
     super(val);
   }
 
@@ -304,6 +313,15 @@ class IfOperation extends ElegantObject {
 
 
 export class ElegantString extends Atom {
+
+  constructor(val) {
+    const bytes = val.split(" ").map(byte => parseInt(byte, 16));
+    // if val is given in form of bytes
+    if (val.length === bytes.length * 3 - 1) {
+      val = String.fromCharCode(...bytes);
+    }
+    super(val);
+  }
 
   data() {
     return this.value;

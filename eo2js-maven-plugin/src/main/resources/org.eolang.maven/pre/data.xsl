@@ -44,7 +44,20 @@ SOFTWARE.
               <xsl:text>ElegantNumber</xsl:text>
             </xsl:when>
             <xsl:when test="@data='bytes'">
-              <xsl:text>ElegantNumber</xsl:text>
+              <xsl:choose>
+                <xsl:when test="ends-with(@base, 'int')">
+                  <xsl:text>ElegantInt</xsl:text>
+                </xsl:when>
+                <xsl:when test="ends-with(@base, 'float')">
+                  <xsl:text>ElegantFloat</xsl:text>
+                </xsl:when>
+                <xsl:when test="ends-with(@base, 'string')">
+                  <xsl:text>ElegantString</xsl:text>
+                </xsl:when>
+              </xsl:choose>
+            </xsl:when>
+            <xsl:when test="@data='tuple'">
+              <xsl:text>ElegantArray</xsl:text>
             </xsl:when>
             <xsl:when test="@data='int'">
               <xsl:text>ElegantNumber</xsl:text>
