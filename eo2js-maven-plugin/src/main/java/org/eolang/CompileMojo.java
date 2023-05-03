@@ -161,21 +161,6 @@ public final class CompileMojo extends AbstractMojo {
         try {
             final XML input = new XMLDocument(file);
             final String name = input.xpath("/program/@name").get(0);
-            /*final Path target = CompileMojo.resolve(temp, name);
-            new Xsline(
-                    input,
-                    new OutputTo(CompileMojo.resolve(temp, name)),
-                    new TargetSpy(CompileMojo.resolve(pre, name)),
-                    new ListOf<>(
-                            "org.eolang.maven/pre/classes.xsl",
-                            "org.eolang.maven/pre/attrs.xsl",
-                            "org.eolang.maven/pre/varargs.xsl",
-                            "org.eolang.maven/pre/arrays.xsl",
-                            "org.eolang.maven/pre/data.xsl",
-                            "org.eolang.maven/pre/to-javascript.xsl"
-                    )
-            ).pass();
-            final XML after = this.noErrors(new XMLDocument(target), name);*/
             final XML after = new Xsline(
                 new TrClasspath<>(
                     new ParsingTrain().empty(),
@@ -197,7 +182,7 @@ public final class CompileMojo extends AbstractMojo {
                     "// on " + now + ". Don't edit it,\n" +
                     "// your changes will be discarded on the next build.\n" +
                     "// The sources were compiled to XML\n" +
-                    "// by the EO compiler v.0.1.25.\n\n";
+                    "// by the EO compiler v.0.29.3.\n\n";
             final String listing = after.xpath("//listing/text()").get(0);
             sources.append(license);
             sources.append(importAtoms);
