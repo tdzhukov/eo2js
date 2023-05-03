@@ -371,7 +371,7 @@ SOFTWARE.
             <xsl:when test="starts-with(@base, 'org.eolang.')">
                 <xsl:variable name="objName" select="tokenize(@base, '\.')[last()]"/>
                 <xsl:choose>
-                    <xsl:when test="not($objName = 'float' or $objName = 'string' or  $objName = 'int' or $objName = 'bool')">
+                    <xsl:when test="not($objName = 'float' or $objName = 'string' or  $objName = 'int' or $objName = 'bool' or $objName = 'true' or $objName = 'false')">
                         <xsl:text>(new </xsl:text>
                         <xsl:value-of select="concat(upper-case(substring($objName, 1, 1)), substring($objName, 2))"/>
                         <xsl:text>()</xsl:text>

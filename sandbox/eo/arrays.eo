@@ -9,6 +9,7 @@
       3
     4
     5
+    false
 
 [] > app
   stdout > @
