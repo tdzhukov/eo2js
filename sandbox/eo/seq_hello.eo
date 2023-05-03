@@ -1,3 +1,5 @@
++alias stdout org.eolang.io.stdout
+
 [] > app
   seq > @
     stdout "Hello\n"

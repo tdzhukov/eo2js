@@ -31,20 +31,24 @@ SOFTWARE.
       <xsl:element name="value">
         <xsl:attribute name="javascript-type">
           <xsl:choose>
-            <xsl:when test="@data='string'">
-              <xsl:text>ElegantString</xsl:text>
-            </xsl:when>
             <xsl:when test="@data='regex'">
               <xsl:text>Regex</xsl:text>
             </xsl:when>
             <xsl:when test="@data='char'">
               <xsl:text>ElegantString</xsl:text>
             </xsl:when>
-            <xsl:when test="@data='float'">
-              <xsl:text>ElegantNumber</xsl:text>
-            </xsl:when>
-            <xsl:when test="@data='int'">
-              <xsl:text>ElegantNumber</xsl:text>
+            <xsl:when test="@data='bytes'">
+              <xsl:choose>
+                <xsl:when test="ends-with(@base, 'int')">
+                  <xsl:text>ElegantInt</xsl:text>
+                </xsl:when>
+                <xsl:when test="ends-with(@base, 'float')">
+                  <xsl:text>ElegantFloat</xsl:text>
+                </xsl:when>
+                <xsl:when test="ends-with(@base, 'string')">
+                  <xsl:text>ElegantString</xsl:text>
+                </xsl:when>
+              </xsl:choose>
             </xsl:when>
             <xsl:when test="@data='bool'">
               <xsl:text>ElegantBoolean</xsl:text>

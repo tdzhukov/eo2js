@@ -1,10 +1,12 @@
++alias stdout org.eolang.io.stdout
++alias sprintf org.eolang.txt.sprintf
+
 [] > hello
   stdout > @
     sprintf > hello_fmt
       "%s %s" > fmt
       "hello" > msg
       fmt
-
 
 [] > h
   hello > @

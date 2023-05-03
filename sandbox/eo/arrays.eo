@@ -1,3 +1,6 @@
++alias stdout org.eolang.io.stdout
++alias sprintf org.eolang.txt.sprintf
+
 [] > array
   * > @
     "string"
@@ -9,7 +12,7 @@
       3
     4
     5
-
+    false
 
 [] > app
   stdout > @
@@ -23,4 +26,3 @@
       (array.get 2).get 3
       array.get 3
       array.get 4
-

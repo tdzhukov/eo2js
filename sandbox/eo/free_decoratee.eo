@@ -1,10 +1,13 @@
++alias stdout org.eolang.io.stdout
++alias sprintf org.eolang.txt.sprintf
+
 [value] > number
   value > @
 
 [@] > decorator
   add. > incremented_value
-     @
-     1
+    @
+    1
 
 [args...] > app
   number 5 > n

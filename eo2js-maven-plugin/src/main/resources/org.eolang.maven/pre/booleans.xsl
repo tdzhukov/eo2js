@@ -22,12 +22,23 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 -->
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" id="pre-arrays" version="2.0">
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" id="pre-booleans" version="2.0">
   <xsl:strip-space elements="*"/>
-  <xsl:template match="o[@data='array' or @data='tuple']">
-    <xsl:element name="array">
-      <xsl:apply-templates select="node()"/>
-    </xsl:element>
+  <xsl:template match="o[@base='org.eolang.true' or @base='org.eolang.false']">
+    <xsl:variable name="o" select="."/>
+    <xsl:variable name="current-name" select="name()"/>
+    <xsl:copy>
+      <xsl:apply-templates select="node()|@*"/>
+      <xsl:attribute name="data">bool</xsl:attribute>
+      <xsl:choose>
+        <xsl:when test="$o[@base='org.eolang.true']">
+          <xsl:text>true</xsl:text>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:text>false</xsl:text>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:copy>
   </xsl:template>
   <xsl:template match="node()|@*">
     <xsl:copy>

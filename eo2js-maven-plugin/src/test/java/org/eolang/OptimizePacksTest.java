@@ -25,7 +25,7 @@ package org.eolang;
 
 import org.cactoos.io.ResourceOf;
 import org.cactoos.text.TextOf;
-import org.eolang.parser.Scenario;
+import org.eolang.parser.CheckPack;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -47,7 +47,7 @@ public final class OptimizePacksTest {
     @MethodSource("yamlPacks")
     public void testPacks(final String pack) throws Exception {
         MatcherAssert.assertThat(
-            new Scenario(
+            new CheckPack(
                 new TextOf(
                     new ResourceOf(
                         String.format("org/eolang/maven/packs/%s", pack)
@@ -59,12 +59,12 @@ public final class OptimizePacksTest {
     }
 
     @SuppressWarnings("PMD.UnusedPrivateMethod")
-    private static Collection<String> yamlPacks() throws IOException {
+    private static Collection<String> yamlPacks() throws IOException, Exception {
         return OptimizePacksTest.yamls("org/eolang/maven/packs/", "");
     }
 
     private static Collection<String> yamls(final String path,
-        final String prefix) throws IOException {
+        final String prefix) throws IOException, Exception {
         final Collection<String> out = new LinkedList<>();
         final String[] paths = new TextOf(
             new ResourceOf(path)
