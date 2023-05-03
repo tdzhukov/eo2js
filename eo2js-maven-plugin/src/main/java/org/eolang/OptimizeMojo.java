@@ -31,7 +31,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -44,8 +43,6 @@ import com.yegor256.xsline.Xsline;
 import com.yegor256.xsline.TrClasspath;
 import org.eolang.parser.ParsingTrain;
 import org.slf4j.impl.StaticLoggerBinder;
-import java.io.FileReader;
-import java.io.IOException;
 
 /**
  * Optimize XML files.
