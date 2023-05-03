@@ -253,7 +253,7 @@ export class ElegantNumber extends Atom {
 }
 
 
-export class ElegantNumberOperation extends ElegantObject {
+class ElegantNumberOperation extends ElegantObject {
 
   constructor(num, operation) {
     super();
@@ -292,7 +292,7 @@ export class ElegantNumberOperation extends ElegantObject {
 }
 
 
-export class IfOperation extends ElegantObject {
+class IfOperation extends ElegantObject {
   constructor(bool_instance) {
     super();
     this.bool_instance = bool_instance;
@@ -332,7 +332,7 @@ export class ElegantString extends Atom {
 }
 
 
-export class ElegantArrayGet extends ElegantObject {
+class ElegantArrayGet extends ElegantObject {
   constructor(arr) {
     super();
     this.arr = arr;

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-cd .. && mvn -DskipTests clean install
+mvn -DskipTests clean install
 npm install
 cd sandbox
 mvn clean compile
