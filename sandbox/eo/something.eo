@@ -1,0 +1,16 @@
++alias stdout org.eolang.io.stdout
++alias sprintf org.eolang.txt.sprintf
+
+[name] > app
+  stdout > @
+    sprintf
+      "Hello, %s!\n"
+      name
+
+app "Nikita" > nickname!
+
+[] > mainApp
+  seq > @
+    nickname
+    nickname
+    nickname
