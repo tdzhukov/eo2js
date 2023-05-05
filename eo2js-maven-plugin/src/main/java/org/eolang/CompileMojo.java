@@ -174,7 +174,7 @@ public final class CompileMojo extends AbstractMojo {
                 ).back()
             ).pass(input);
             final StringBuilder sources = new StringBuilder();
-            final String importAtoms = "import {ElegantObject, ApplicationMixin, " + 
+            final String importAtoms = "import {DataizationResultStorage, ElegantObject, ApplicationMixin, " + 
                     "Atom, Attribute, DataizationError, ElegantBoolean, ElegantNumber, " +
                     "ElegantString, ElegantArray, Sprintf, Stdout, Seq} from './atoms.js';\n\n";
             final String now = new SimpleDateFormat("yyyy.MM.dd' at 'HH:mm:ss").format(new Date());
@@ -187,6 +187,7 @@ public final class CompileMojo extends AbstractMojo {
             sources.append(license);
             sources.append(importAtoms);
             sources.append("/*\n").append(listing).append("\n*/\n\n");
+            sources.append("let dataize_res_stor = new DataizationResultStorage();\n");
             for (final XML java : after.nodes("//class[javascript and not(@atom)]")) {
                 sources.append(java.xpath("javascript/text()").get(0));
 

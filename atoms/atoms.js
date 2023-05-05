@@ -2,16 +2,42 @@
 import { createRequire } from "module";
 const require = createRequire(import.meta.url);
 
+export class DataizationResultStorage {
+
+  constructor() {
+    this.loc_to_result = {};
+  }
+
+  get_value(key) {
+    if (!(key in this.loc_to_result)) {
+      return null;
+    }
+    return this.loc_to_result[key];
+  }
+
+  put(key, value) {
+    this.loc_to_result[key] = value;
+  }
+}
+
 /**
  * Class ElegantObject
  */
 export class ElegantObject {
   
-  constructor() {
+  constructor(kwargs={}) {
     this.debug_mode = false;
     this.varargs = false;
     this.application_counter = 0;
     this.attributes = [];
+    if ("dataization_result_storage" in kwargs) {
+      // only if object is constant (dataize once)
+      this.dataization_result_storage = kwargs["dataization_result_storage"];
+      this.loc = kwargs["loc"];
+    } else {
+      this.dataization_result_storage = null;
+      this.loc = null;
+    }
   }
 
   toString() {
@@ -21,6 +47,12 @@ export class ElegantObject {
   dataize() {
     if (this.debug_mode) {
       console.log(`Dataizing ${this}'s phi-attrbute...`);
+    }
+    if (this.dataization_result_storage !== null) {
+      if (this.dataization_result_storage.get_value(this.loc) === null) {
+        this.dataization_result_storage.put(this.loc, this.attr__phi.dataize());
+      }
+      return this.dataization_result_storage.get_value(this.loc);
     }
     return this.attr__phi.dataize();
   }
@@ -59,8 +91,8 @@ export class Atom extends ElegantObject {
 
   value = null;
 
-  constructor(val) {
-    super();
+  constructor(val, kwargs={}) {
+    super(kwargs);
     this.value = val
   }
 
@@ -93,8 +125,8 @@ function isCallable(obj) {
 
 
 export class Attribute extends ElegantObject {
-  constructor(obj, name) {
-    super();
+  constructor(obj, name, kwargs={}) {
+    super(kwargs);
     this.obj = obj;
     this.name = name;
     this.args = [];
@@ -114,6 +146,13 @@ export class Attribute extends ElegantObject {
   }
 
   dataize() {
+    if (this.dataization_result_storage !== null) {
+      let result = this.dataization_result_storage.get_value(this.loc);
+      if (result !== null) {
+        return result;
+      }
+    }
+
     let attr = null, res;
 
     if (getPropertiesAndMethods(this.obj).includes(this.inner_name())) {
@@ -151,10 +190,18 @@ export class Attribute extends ElegantObject {
         for (let arg of this.args) {
           res = res.call(arg);
         }
+        if (this.dataization_result_storage !== null) {
+          this.dataization_result_storage.put(this.loc, res.dataize());
+          return this.dataization_result_storage.get_value(this.loc);
+        }
         return res.dataize();
       } else {
         if (this.debug_mode) {
           console.log(`Dataizing ${attr.toString()}, no args needed.`);
+        }
+        if (this.dataization_result_storage !== null) {
+          this.dataization_result_storage.put(this.loc, attr.dataize());
+          return this.dataization_result_storage.get_value(this.loc);
         }
         return attr.dataize();
       }
@@ -166,6 +213,10 @@ export class Attribute extends ElegantObject {
     attr = this.obj.dataize()[this.inner_name()];
     for (let arg of this.args) {
       attr = attr.call(arg);
+    }
+    if (this.dataization_result_storage !== null) {
+      this.dataization_result_storage.put(this.loc, attr.dataize());
+      return this.dataization_result_storage.get_value(this.loc);
     }
     return attr.dataize();
   }
@@ -182,8 +233,8 @@ export class DataizationError extends ElegantObject {
 
 
 export class ElegantBoolean extends Atom {
-  constructor(val) {
-    super(val);
+  constructor(val, kwargs={}) {
+    super(val, kwargs);
   }
 
   get attr_if() {
@@ -202,17 +253,17 @@ export class ElegantBoolean extends Atom {
 
 export class ElegantNumber extends Atom {
 
-  constructor(val, number_type="not_used") {
+  constructor(val, kwargs={}) {
     if (typeof val === "string") {
       const bytes = val.split(" ").map(byte => parseInt(byte, 16));
-      if (number_type === "int") {
+      if (kwargs["number_type"] === "int") {
         val = Number(new BigInt64Array(new Uint8Array(bytes.reverse()).buffer)[0]);
       }
-      if (number_type === "float") {
+      if (kwargs["number_type"] === "float") {
         val = Number(new Float64Array(new Uint8Array(bytes.reverse()).buffer)[0]);
       }
     }
-    super(val);
+    super(val, kwargs);
   }
 
   get attr_add() {
@@ -314,12 +365,12 @@ class IfOperation extends ElegantObject {
 
 export class ElegantString extends Atom {
 
-  constructor(val, is_bytes=false) {
-    if (is_bytes) {
+  constructor(val, kwargs={}) {
+    if ("is_bytes" in kwargs && kwargs["is_bytes"]) {
       let bytes = val.split(" ").map(byte => parseInt(byte, 16));
       val = String.fromCharCode(...bytes);
     }
-    super(val);
+    super(val, kwargs);
   }
 
   data() {
@@ -352,8 +403,8 @@ class ElegantArrayGet extends ElegantObject {
 
 export class ElegantArray extends Atom {
   
-  constructor() {
-    super();
+  constructor(kwargs={}) {
+    super([], kwargs);
     this.value = [];
   }
 
@@ -396,8 +447,8 @@ export class ElegantArray extends Atom {
 
 export class Sprintf extends ElegantObject {
 
-  constructor() {
-    super();
+  constructor(kwargs={}) {
+    super(kwargs);
     this.sprintf = require('sprintf-js').sprintf;
     this.attributes = ["fmt", "args"];
     this.attr_fmt = new DataizationError();
@@ -419,8 +470,8 @@ export class Sprintf extends ElegantObject {
 
 export class Stdout extends Atom {
   
-  constructor() {
-    super();
+  constructor(kwargs={}) {
+    super(null, kwargs);
     this.attributes = ["text"];
     this.attr_text = new DataizationError();
   }
@@ -438,8 +489,8 @@ export class Stdout extends Atom {
 
 export class Seq extends Atom {
   
-  constructor() {
-    super();
+  constructor(kwargs={}) {
+    super(null, kwargs);
     this.attributes = [];
     this.args = [];
   }

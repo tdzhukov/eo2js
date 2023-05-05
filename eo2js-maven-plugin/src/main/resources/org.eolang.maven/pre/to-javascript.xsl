@@ -41,6 +41,31 @@ SOFTWARE.
             <xsl:value-of select="$TAB"/>
         </xsl:for-each>
     </xsl:function>
+    <xsl:function name="eo:kwargs">
+        <xsl:param name="o"/>
+        <xsl:if test="$o/@javascript-type = 'ElegantString' or $o/@javascript-type = 'ElegantInt' or $o/@javascript-type = 'ElegantFloat' or exists($o/@const)">
+            <xsl:text>{</xsl:text>
+        </xsl:if>
+        <xsl:choose>
+            <xsl:when test="$o/@javascript-type = 'ElegantInt'">
+                <xsl:text>"number_type": "int", </xsl:text>
+            </xsl:when>
+            <xsl:when test="$o/@javascript-type = 'ElegantFloat'">
+                <xsl:text>"number_type": "float", </xsl:text>
+            </xsl:when>
+            <xsl:when test="$o/@javascript-type = 'ElegantString'">
+                <xsl:text>"is_bytes": true, </xsl:text>
+            </xsl:when>
+            <xsl:when test="exists($o/@const)">
+                <xsl:text>"dataization_result_storage": dataize_res_stor, "loc": "</xsl:text>
+                <xsl:value-of select="$o/@loc"/>
+                <xsl:text>", </xsl:text>
+            </xsl:when>
+        </xsl:choose>
+        <xsl:if test="$o/@javascript-type = 'ElegantString' or $o/@javascript-type = 'ElegantInt' or $o/@javascript-type = 'ElegantFloat' or exists($o/@const)">
+            <xsl:text>}</xsl:text>
+        </xsl:if>
+    </xsl:function>
     <xsl:function name="eo:type-of">
         <xsl:param name="root"/>
         <xsl:param name="o"/>
@@ -130,11 +155,11 @@ SOFTWARE.
         <xsl:value-of select="eo:eol(1)"/>
         <xsl:text>constructor(</xsl:text>
         <xsl:if test="exists(@parent)">
-            <xsl:text>attr__parent</xsl:text>
+            <xsl:text>attr__parent, </xsl:text>
         </xsl:if>
-        <xsl:text>) {</xsl:text>
+        <xsl:text>kwargs={}) {</xsl:text>
         <xsl:value-of select="eo:eol(2)"/>
-        <xsl:text>super();</xsl:text>
+        <xsl:text>super(kwargs);</xsl:text>
         <xsl:value-of select="eo:eol(2)"/>
         <xsl:text>this.attr__self = this;</xsl:text>
         <xsl:value-of select="eo:eol(2)"/>
@@ -263,7 +288,9 @@ SOFTWARE.
         <xsl:value-of select="eo:eol(1)"/>
     </xsl:template>
     <xsl:template match="array">
-        <xsl:text>(new ElegantArray()</xsl:text>
+        <xsl:text>(new ElegantArray(</xsl:text>
+        <xsl:value-of select="eo:kwargs(.)"/>
+        <xsl:text>)</xsl:text>
         <!-- <xsl:apply-templates select="*"/> WAS THERE PREVIOUSLY -->
         <xsl:apply-templates select="." mode="application"/>
         <xsl:text>)</xsl:text>
@@ -304,7 +331,9 @@ SOFTWARE.
             <xsl:when test="@cut and @name">
                 <xsl:text>new </xsl:text>
                 <xsl:value-of select="eo:class-name($b/@name)"/>
-                <xsl:text>(this)</xsl:text>
+                <xsl:text>(this, </xsl:text>
+                <xsl:value-of select="eo:kwargs(.)"/>
+                <xsl:text>)</xsl:text>
                 <xsl:apply-templates select="." mode="application">
                     <xsl:with-param name="name" select="$name"/>
                     <xsl:with-param name="indent" select="$indent"/>
@@ -323,7 +352,9 @@ SOFTWARE.
             <xsl:when test="$b and name($b)='class'">
                 <xsl:text>(new </xsl:text>
                 <xsl:value-of select="eo:class-name(@base)"/>
-                <xsl:text>()</xsl:text>
+                <xsl:text>(</xsl:text>
+                <xsl:value-of select="eo:kwargs(.)"/>
+                <xsl:text>)</xsl:text>
                 <xsl:apply-templates select="." mode="application">
                     <xsl:with-param name="name" select="$name"/>
                     <xsl:with-param name="indent" select="$indent"/>
@@ -374,7 +405,9 @@ SOFTWARE.
                     <xsl:when test="not($objName = 'float' or $objName = 'string' or  $objName = 'int' or $objName = 'bool' or $objName = 'true' or $objName = 'false')">
                         <xsl:text>(new </xsl:text>
                         <xsl:value-of select="concat(upper-case(substring($objName, 1, 1)), substring($objName, 2))"/>
-                        <xsl:text>()</xsl:text>
+                        <xsl:text>(</xsl:text>
+                        <xsl:value-of select="eo:kwargs(.)"/>
+                        <xsl:text>)</xsl:text>
                         <!-- <xsl:apply-templates select="*"> WAS HERE PREVIOUSLY -->
                         <xsl:apply-templates select="." mode="application">
                             <xsl:with-param name="name" select="$name"/>
@@ -396,7 +429,9 @@ SOFTWARE.
             <xsl:when test="ancestor::class[@name=$o/@base]">
                 <xsl:text>(new </xsl:text>
                 <xsl:value-of select="concat('', eo:class-name(@base))"/>
-                <xsl:text>(this.attr__parent)</xsl:text>
+                <xsl:text>(this.attr__parent, </xsl:text>
+                <xsl:value-of select="eo:kwargs(.)"/>
+                <xsl:text>)</xsl:text>
                 <!-- <xsl:apply-templates select="*"/> WAS THERE PREVIOUSLY -->
                 <xsl:apply-templates select="." mode="application">
                     <xsl:with-param name="name" select="$name"/>
@@ -409,6 +444,7 @@ SOFTWARE.
                 <xsl:value-of select="concat('', eo:class-name(@base))"/>
                 <xsl:text>(</xsl:text>
                 <xsl:apply-templates select="*"/>
+                <xsl:value-of select="eo:kwargs(.)"/>
                 <xsl:text>))</xsl:text>
             </xsl:otherwise>
         </xsl:choose>
@@ -441,6 +477,8 @@ SOFTWARE.
                 <xsl:text>"</xsl:text>
             </xsl:otherwise>
         </xsl:choose>
+        <xsl:text>, </xsl:text>
+        <xsl:value-of select="eo:kwargs(.)"/>
         <xsl:text>)</xsl:text>
         <xsl:apply-templates select="." mode="application">
             <xsl:with-param name="indent" select="$indent"/>
@@ -488,17 +526,8 @@ SOFTWARE.
         <xsl:if test="@javascript-type = 'ElegantString' or @javascript-type = 'ElegantInt' or @javascript-type = 'ElegantFloat'">"</xsl:if>
         <xsl:value-of select="text()"/>
         <xsl:if test="@javascript-type = 'ElegantString' or @javascript-type = 'ElegantInt' or @javascript-type = 'ElegantFloat'">"</xsl:if>
-        <xsl:choose>
-            <xsl:when test="@javascript-type = 'ElegantInt'">
-                <xsl:text>, "int"</xsl:text>
-            </xsl:when>
-            <xsl:when test="@javascript-type = 'ElegantFloat'">
-                <xsl:text>, "float"</xsl:text>
-            </xsl:when>
-            <xsl:when test="@javascript-type = 'ElegantString'">
-                <xsl:text>, true</xsl:text>
-            </xsl:when>
-        </xsl:choose>
+        <xsl:text>, </xsl:text>
+        <xsl:value-of select="eo:kwargs(.)"/>
         <xsl:text>))</xsl:text>
     </xsl:template>
     <xsl:template match="meta[head='package']" mode="head">
