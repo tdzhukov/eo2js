@@ -1,6 +1,4 @@
 +package sandbox
-+alias stdout org.eolang.io.stdout
-+alias sprintf org.eolang.txt.sprintf
 
 [n] > factorial
   if. > @
@@ -16,8 +14,8 @@
           1
 
 [args...] > appFactorial
-  stdout > @
-    sprintf
+  QQ.io.stdout > @
+    QQ.txt.sprintf
       "%d! = %d\n"
       (args.get 0)
       factorial (args.get 0)

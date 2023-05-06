@@ -512,6 +512,85 @@ export class Seq extends Atom {
   }
 }
 
+export class EOIo {
+
+  get attr_stdout() {
+    return new Stdout();
+  }
+
+  toString() {
+    return "EOIo()";
+  }
+
+  dataize() {
+    return this;
+  }
+}
+
+export class EOTxt {
+
+  get attr_sprintf() {
+    return new Sprintf();
+  }
+
+  toString() {
+    return "EOTxt()";
+  }
+
+  dataize() {
+    return this;
+  }
+}
+
+export class EOEolang {
+
+  get attr_io() {
+    return new EOIo();
+  }
+
+  get attr_txt() {
+    return new EOTxt();
+  }
+
+  toString() {
+    return "EOEolang()";
+  }
+
+  dataize() {
+    return this;
+  }
+}
+
+export class EOOrg {
+
+  get attr_eolang() {
+    return new EOEolang();
+  }
+
+  toString() {
+    return "EOOrg()";
+  }
+
+  dataize() {
+    return this;
+  }
+}
+
+export class EOQ {
+
+  get attr_org() {
+    return new EOOrg();
+  }
+
+  toString() {
+    return "EOQ()";
+  }
+
+  dataize() {
+    return this;
+  }
+}
+
 Object.assign(ElegantNumberOperation.prototype, ApplicationMixin);
 Object.assign(IfOperation.prototype, ApplicationMixin);
 Object.assign(ElegantArrayGet.prototype, ApplicationMixin);
