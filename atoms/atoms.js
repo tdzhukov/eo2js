@@ -234,6 +234,13 @@ export class DataizationError extends ElegantObject {
 
 export class ElegantBoolean extends Atom {
   constructor(val, kwargs={}) {
+    if (typeof val === "string") {
+      if (val === "01" || val === "true") {
+        val = true;
+      } else {
+        val = false;
+      }
+    }
     super(val, kwargs);
   }
 

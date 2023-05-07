@@ -1,7 +1,0 @@
-+alias stdout org.eolang.io.stdout
-
-[] > app
-  seq > @
-    stdout "Hello\n"
-    stdout "World!\n"
-    stdout "How are you?"

@@ -48,6 +48,9 @@ SOFTWARE.
                 <xsl:when test="ends-with(@base, 'string')">
                   <xsl:text>ElegantString</xsl:text>
                 </xsl:when>
+                <xsl:when test="ends-with(@base, 'bool')">
+                  <xsl:text>ElegantBoolean</xsl:text>
+                </xsl:when>
               </xsl:choose>
             </xsl:when>
             <xsl:when test="@data='bool'">

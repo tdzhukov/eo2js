@@ -523,9 +523,9 @@ SOFTWARE.
             </xsl:otherwise>
         </xsl:choose>
         <xsl:text>(</xsl:text>
-        <xsl:if test="@javascript-type = 'ElegantString' or @javascript-type = 'ElegantInt' or @javascript-type = 'ElegantFloat'">"</xsl:if>
+        <xsl:if test="@javascript-type = 'ElegantString' or @javascript-type = 'ElegantInt' or @javascript-type = 'ElegantFloat' or @javascript-type = 'ElegantBoolean'">"</xsl:if>
         <xsl:value-of select="text()"/>
-        <xsl:if test="@javascript-type = 'ElegantString' or @javascript-type = 'ElegantInt' or @javascript-type = 'ElegantFloat'">"</xsl:if>
+        <xsl:if test="@javascript-type = 'ElegantString' or @javascript-type = 'ElegantInt' or @javascript-type = 'ElegantFloat' or @javascript-type = 'ElegantBoolean'">"</xsl:if>
         <xsl:text>, </xsl:text>
         <xsl:value-of select="eo:kwargs(.)"/>
         <xsl:text>))</xsl:text>
