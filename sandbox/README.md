@@ -7,7 +7,6 @@ installed):
 
 ```bash
 $ git clone https://github.com/polystat/eo2js.git
-$ cd eo2js/sandbox
 ```
 
 After that, you can compile and run the code (you will need
@@ -16,17 +15,23 @@ After that, you can compile and run the code (you will need
 and [NPM 8.1.2+](https://www.npmjs.com/package/npm) installed) by running:
 
 ```bash
-$ ./compile.sh
+$ npm run build
 ```
 
-Or you can run it in debug mode (with logging). To do this pass `--debug` flag to the bash script:
+Or you can run it in debug mode (with logging). To do this pass `--debug` flag:
 
 ```bash
-$ ./compile.sh --debug
+$ npm run build -- --debug
+```
+
+You also can add your own tests to `sanbox/test` and run them with:
+
+```bash
+$ npm test
 ```
 
 This script will run `eo2js-maven-plugin` configured in the `pom.xml` of this repository
 
 Intermediary `*.xml` files will be generated in the `target` directory (it will
-be created). Also, there will be `.js` files in `target/generated-sources` folder. Feel free to analyze
-them: EO is parsed into XML by [eo-parser v0.1.25](https://mvnrepository.com/artifact/org.eolang/eo-parser), then translated to JavaScript.
+be created). Also, there will be `.js` files in `sandbox/target/generated-sources` folder. Feel free to analyze
+them: EO is parsed into XML by [eo-parser v0.29.3](https://mvnrepository.com/artifact/org.eolang/eo-parser), then translated to JavaScript.
