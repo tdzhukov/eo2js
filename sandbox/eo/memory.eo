@@ -1,0 +1,10 @@
++alias stdout org.eolang.io.stdout
+
+memory 0 > m
+
+[] > app
+  seq > @
+    stdout m
+    stdout "\n"
+    m.write "Hello, world!\n"
+    stdout m

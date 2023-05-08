@@ -43,7 +43,7 @@ SOFTWARE.
     </xsl:function>
     <xsl:function name="eo:kwargs">
         <xsl:param name="o"/>
-        <xsl:if test="$o/@javascript-type = 'ElegantString' or $o/@javascript-type = 'ElegantInt' or $o/@javascript-type = 'ElegantFloat' or exists($o/@const)">
+        <xsl:if test="$o/@javascript-type = 'ElegantString' or $o/@javascript-type = 'ElegantInt' or $o/@javascript-type = 'ElegantFloat' or exists($o/@const) or ends-with($o/@base, 'memory')">
             <xsl:text>{</xsl:text>
         </xsl:if>
         <xsl:choose>
@@ -56,13 +56,13 @@ SOFTWARE.
             <xsl:when test="$o/@javascript-type = 'ElegantString'">
                 <xsl:text>"is_bytes": true, </xsl:text>
             </xsl:when>
-            <xsl:when test="exists($o/@const)">
+            <xsl:when test="exists($o/@const) or ends-with($o/@base, 'memory')">
                 <xsl:text>"dataization_result_storage": dataize_res_stor, "loc": "</xsl:text>
                 <xsl:value-of select="$o/@loc"/>
                 <xsl:text>", </xsl:text>
             </xsl:when>
         </xsl:choose>
-        <xsl:if test="$o/@javascript-type = 'ElegantString' or $o/@javascript-type = 'ElegantInt' or $o/@javascript-type = 'ElegantFloat' or exists($o/@const)">
+        <xsl:if test="$o/@javascript-type = 'ElegantString' or $o/@javascript-type = 'ElegantInt' or $o/@javascript-type = 'ElegantFloat' or exists($o/@const) or ends-with($o/@base, 'memory')">
             <xsl:text>}</xsl:text>
         </xsl:if>
     </xsl:function>
