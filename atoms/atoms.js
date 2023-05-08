@@ -2,14 +2,19 @@
 import { createRequire } from "module";
 const require = createRequire(import.meta.url);
 
+
 export class DataizationResultStorage {
 
   constructor() {
     this.loc_to_result = {};
   }
 
+  has_key(key) {
+    return key in this.loc_to_result;
+  }
+
   get_value(key) {
-    if (!(key in this.loc_to_result)) {
+    if (!this.has_key(key)) {
       return null;
     }
     return this.loc_to_result[key];
@@ -488,7 +493,7 @@ export class Stdout extends Atom {
   }
 
   dataize() {
-    process.stdout.write(this.attr_text.dataize().data());
+    process.stdout.write(this.attr_text.dataize().data().toString());
     return this;
   }
 }
@@ -516,6 +521,49 @@ export class Seq extends Atom {
       arg.dataize();
     }
     return this;
+  }
+}
+
+class MemoryWrite extends ElegantObject {
+  constructor(mem) {
+    super();
+    this.mem = mem;
+    this.attributes = ["x"];
+    this.attr_x = new DataizationError();
+  }
+
+  toString() {
+    return `MemoryWrite(${this.mem})`;
+  }
+
+  dataize() {
+    this.mem.dataization_result_storage.put(this.mem.loc, this.attr_x);
+    return this.attr_x;
+  }
+}
+
+export class Memory extends Atom {
+  constructor(kwargs={}) {
+    super(null, kwargs);
+  }
+
+  toString() {
+    return `Memory(${this.dataization_result_storage.get_value(this.loc)})`;
+  }
+
+  call(arg) {
+    if (!this.dataization_result_storage.has_key(this.loc)) {
+      this.dataization_result_storage.put(this.loc, arg);
+    }
+    return this;
+  }
+
+  get attr_write() {
+    return new MemoryWrite(this);
+  }
+
+  dataize() {
+    return this.dataization_result_storage.get_value(this.loc);
   }
 }
 
@@ -603,3 +651,4 @@ Object.assign(IfOperation.prototype, ApplicationMixin);
 Object.assign(ElegantArrayGet.prototype, ApplicationMixin);
 Object.assign(Sprintf.prototype, ApplicationMixin);
 Object.assign(Stdout.prototype, ApplicationMixin);
+Object.assign(MemoryWrite.prototype, ApplicationMixin);
