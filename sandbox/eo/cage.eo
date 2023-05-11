@@ -1,0 +1,12 @@
++alias stdout org.eolang.io.stdout
+
+cage 0 > h
+
+[] > func
+  stdout > @
+    "func\n"
+
+[] > app
+  seq > @
+    h.write func
+    h
