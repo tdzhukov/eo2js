@@ -3,7 +3,7 @@ import { createRequire } from "module";
 const require = createRequire(import.meta.url);
 
 
-export class DataizationResultStorage {
+export class ObjectStorage {
 
   constructor() {
     this.loc_to_result = {};
@@ -35,12 +35,12 @@ export class ElegantObject {
     this.varargs = false;
     this.application_counter = 0;
     this.attributes = [];
-    if ("dataization_result_storage" in kwargs) {
+    if ("object_storage" in kwargs) {
       // only if object is constant (dataize once)
-      this.dataization_result_storage = kwargs["dataization_result_storage"];
+      this.object_storage = kwargs["object_storage"];
       this.loc = kwargs["loc"];
     } else {
-      this.dataization_result_storage = null;
+      this.object_storage = null;
       this.loc = null;
     }
   }
@@ -53,11 +53,11 @@ export class ElegantObject {
     if (this.debug_mode) {
       console.log(`Dataizing ${this}'s phi-attrbute...`);
     }
-    if (this.dataization_result_storage !== null) {
-      if (this.dataization_result_storage.get_value(this.loc) === null) {
-        this.dataization_result_storage.put(this.loc, this.attr__phi.dataize());
+    if (this.object_storage !== null) {
+      if (this.object_storage.get_value(this.loc) === null) {
+        this.object_storage.put(this.loc, this.attr__phi.dataize());
       }
-      return this.dataization_result_storage.get_value(this.loc);
+      return this.object_storage.get_value(this.loc);
     }
     return this.attr__phi.dataize();
   }
@@ -151,8 +151,8 @@ export class Attribute extends ElegantObject {
   }
 
   dataize() {
-    if (this.dataization_result_storage !== null) {
-      let result = this.dataization_result_storage.get_value(this.loc);
+    if (this.object_storage !== null) {
+      let result = this.object_storage.get_value(this.loc);
       if (result !== null) {
         return result;
       }
@@ -195,18 +195,18 @@ export class Attribute extends ElegantObject {
         for (let arg of this.args) {
           res = res.call(arg);
         }
-        if (this.dataization_result_storage !== null) {
-          this.dataization_result_storage.put(this.loc, res.dataize());
-          return this.dataization_result_storage.get_value(this.loc);
+        if (this.object_storage !== null) {
+          this.object_storage.put(this.loc, res.dataize());
+          return this.object_storage.get_value(this.loc);
         }
         return res.dataize();
       } else {
         if (this.debug_mode) {
           console.log(`Dataizing ${attr.toString()}, no args needed.`);
         }
-        if (this.dataization_result_storage !== null) {
-          this.dataization_result_storage.put(this.loc, attr.dataize());
-          return this.dataization_result_storage.get_value(this.loc);
+        if (this.object_storage !== null) {
+          this.object_storage.put(this.loc, attr.dataize());
+          return this.object_storage.get_value(this.loc);
         }
         return attr.dataize();
       }
@@ -219,9 +219,9 @@ export class Attribute extends ElegantObject {
     for (let arg of this.args) {
       attr = attr.call(arg);
     }
-    if (this.dataization_result_storage !== null) {
-      this.dataization_result_storage.put(this.loc, attr.dataize());
-      return this.dataization_result_storage.get_value(this.loc);
+    if (this.object_storage !== null) {
+      this.object_storage.put(this.loc, attr.dataize());
+      return this.object_storage.get_value(this.loc);
     }
     return attr.dataize();
   }
@@ -533,27 +533,28 @@ class MemoryWrite extends ElegantObject {
   }
 
   toString() {
-    return `MemoryWrite(${this.mem})`;
+    return `MemoryWrite(${this.mem.dataize().data()})`;
   }
 
   dataize() {
-    this.mem.dataization_result_storage.put(this.mem.loc, this.attr_x);
+    this.mem.object_storage.put(this.mem.loc, this.attr_x.dataize());
     return this.attr_x;
   }
 }
 
 export class Memory extends Atom {
   constructor(kwargs={}) {
+    kwargs["loc"] += "_mem";
     super(null, kwargs);
   }
 
   toString() {
-    return `Memory(${this.dataization_result_storage.get_value(this.loc)})`;
+    return `Memory(${this.object_storage.get_value(this.loc).dataize().data()})`;
   }
 
   call(arg) {
-    if (!this.dataization_result_storage.has_key(this.loc)) {
-      this.dataization_result_storage.put(this.loc, arg);
+    if (!this.object_storage.has_key(this.loc)) {
+      this.object_storage.put(this.loc, arg.dataize());
     }
     return this;
   }
@@ -563,7 +564,51 @@ export class Memory extends Atom {
   }
 
   dataize() {
-    return this.dataization_result_storage.get_value(this.loc);
+    return this.object_storage.get_value(this.loc);
+  }
+}
+
+class CageWrite extends ElegantObject {
+  constructor(cage) {
+    super();
+    this.cage = cage;
+    this.attributes = ["x"];
+    this.attr_x = new DataizationError();
+  }
+
+  toString() {
+    return `CageWrite(${this.cage.dataize().data()})`;
+  }
+
+  dataize() {
+    this.cage.object_storage.put(this.cage.loc, this.attr_x);
+    return this.attr_x;
+  }
+}
+
+export class Cage extends Atom {
+  constructor(kwargs={}) {
+    kwargs["loc"] += "_cage";
+    super(null, kwargs);
+  }
+
+  toString() {
+    return `Cage(${this.object_storage.get_value(this.loc)})`;
+  }
+
+  call(arg) {
+    if (!this.object_storage.has_key(this.loc)) {
+      this.object_storage.put(this.loc, arg);
+    }
+    return this;
+  }
+
+  get attr_write() {
+    return new CageWrite(this);
+  }
+
+  dataize() {
+    return this.object_storage.get_value(this.loc).dataize();
   }
 }
 
@@ -652,3 +697,4 @@ Object.assign(ElegantArrayGet.prototype, ApplicationMixin);
 Object.assign(Sprintf.prototype, ApplicationMixin);
 Object.assign(Stdout.prototype, ApplicationMixin);
 Object.assign(MemoryWrite.prototype, ApplicationMixin);
+Object.assign(CageWrite.prototype, ApplicationMixin);
