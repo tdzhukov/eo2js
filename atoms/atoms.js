@@ -517,10 +517,11 @@ export class Seq extends Atom {
   }
 
   dataize() {
+    let final_result = null;
     for (let arg of this.args) {
-      arg.dataize();
+      final_result = arg.dataize();
     }
-    return this;
+    return final_result;
   }
 }
 
