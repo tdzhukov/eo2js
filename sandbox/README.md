@@ -15,22 +15,10 @@ After that, you can compile and run the code (you will need
 and [NPM 8.1.2+](https://www.npmjs.com/package/npm) installed) by running:
 
 ```bash
-$ npm run build
+$ npm run build -- sandbox
 ```
 
-Or you can run it in debug mode (with logging). To do this pass `--debug` flag:
-
-```bash
-$ npm run build -- --debug
-```
-
-You also can add your own tests to `sanbox/test` and run them with:
-
-```bash
-$ npm test
-```
-
-This script will run `eo2js-maven-plugin` configured in the `pom.xml` of this repository
+This script will run `eo2js-maven-plugin` configured in the `pom.xml` of this repository.
 
 Intermediary `*.xml` files will be generated in the `target` directory (it will
 be created). Also, there will be `.js` files in `sandbox/target/generated-sources` folder. Feel free to analyze
