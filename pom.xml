@@ -13,7 +13,7 @@
   </modules>
 
   <name>eo2js</name>
-  <url>https://github.com/polystat/eo2js</url>
+  <url>https://github.com/tdzhukov/eo2js</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

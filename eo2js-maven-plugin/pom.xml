@@ -12,7 +12,7 @@
 
   <name>eo2js-maven-plugin Maven Plugin</name>
 
-  <url>https://github.com/polystat/eo2js/tree/main/eo2js-maven-plugin</url>
+  <url>https://github.com/tdzhukov/eo2js/tree/main/eo2js-maven-plugin</url>
 
   <prerequisites>
     <maven>${maven.version}</maven>

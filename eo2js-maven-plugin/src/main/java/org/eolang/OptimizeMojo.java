@@ -104,13 +104,9 @@ public final class OptimizeMojo extends AbstractMojo {
                 new TrClasspath<>(
                     new ParsingTrain(),
                     "/org.eolang.maven/optimize/globals-to-abstracts.xsl",
-                //     "/org.eolang.maven/optimize/remove-refs.xsl",
                     "/org.eolang.maven/optimize/abstracts-float-up.xsl",
-                //     "/org.eolang.maven/optimize/remove-levels.xsl",
-                //     "/org/eolang/parser/add-refs.xsl",
                     "/org.eolang.maven/optimize/fix-missed-names.xsl",
                     "/org.eolang.maven/optimize/fix-abstracts.xsl"
-                //     "/org/eolang/parser/errors/broken-refs.xsl"
                 ).back()
             ).pass(new XMLDocument(file));
             final Path target = this.targetDir.toPath()
